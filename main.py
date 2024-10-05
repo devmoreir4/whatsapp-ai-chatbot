@@ -17,10 +17,10 @@ def grafico(message):
 
 @bot.message_handler(commands=["camera"])
 def camera(message):
-    bot.send_message(message.chat.id, "Exibindo a câmera de monitoramento")
+    bot.send_message(message.chat.id, "Câmera de monitoramento disponível em: https://aguasdocaparao.com.br/bom-jesus-do-itabapoana/")
 
-@bot.message_handler(commands=["option1"])
-def option1(message):
+@bot.message_handler(commands=["opcao1"])
+def opcao1(message):
     text = """
     O que você quer? (Clique em uma opção)
     /nivel Consultar o nível do rio
@@ -35,8 +35,8 @@ def check(message):
 def responder(message):
     text = """
     Escolha uma opção para continuar (Clique no item):
-    /option1 Obter informações do rio
-    /option2 Obter informações do clima"""
+    /opcao1 Obter informações do rio Itabapoana
+    /opcao2 Obter informações do clima local"""
     bot.reply_to(message, text)
 
 bot.polling()
