@@ -39,24 +39,45 @@ def get_quota():
                 if div_with_quota:
                     quota = div_with_quota.text.strip()
                     return f"A cota de transbordamento atual é de {quota}"
+    else:
+        return "Erro ao acessar o site."
 
 @bot.message_handler(commands=["nivel"])
 def nivel(message):
     river_level = get_river_level()
     bot.send_message(message.chat.id, river_level)
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
 @bot.message_handler(commands=["cota"])
 def cota(message):
     flood_quota = get_quota()
     bot.send_message(message.chat.id, "A cota de transbordamento é o nível crítico de altura da água em um rio. Ela indica o ponto em que as inundações se tornam iminentes ou começam a ocorrer.\n\n " + flood_quota)
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
 @bot.message_handler(commands=["grafico"])
 def grafico(message):
-    bot.send_message(message.chat.id, "Exibindo o gráfico, clique aqui para iniciar: /iniciar")
+    bot.send_message(message.chat.id, "Exibindo o gráfico do histórico...")
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
+
+@bot.message_handler(commands=["grafico_anual"])
+def grafico(message):
+    bot.send_message(message.chat.id, "Exibindo o gráfico anual...")
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
+
+@bot.message_handler(commands=["grafico_mensal"])
+def grafico(message):
+    bot.send_message(message.chat.id, "Exibindo o gráfico mensal...")
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
+
+@bot.message_handler(commands=["grafico_semanal"])
+def grafico(message):
+    bot.send_message(message.chat.id, "Exibindo o gráfico dos ultimos 7 dias...")
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
 @bot.message_handler(commands=["camera"])
 def camera(message):
     bot.send_message(message.chat.id, "Câmera de monitoramento disponível em: https://aguasdocaparao.com.br/bom-jesus-do-itabapoana/")
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
 @bot.message_handler(commands=["opcao1"])
 def opcao1(message):
@@ -64,7 +85,10 @@ def opcao1(message):
     O que você quer? (Clique em uma opção)
     /nivel Consultar o nível do rio
     /cota Consultar a cota de transbordamento
-    /grafico Exibir gráfico do nível do rio
+    /grafico Exibir gráfico do histórico do nível do rio
+    /grafico_anual Exibir gráfico do nível do rio no último ano
+    /grafico_mensal Exibir gráfico do nível do rio nos últimos 30 dias
+    /grafico_semanal Exibir gráfico do nível do rio nos últimos 7 dias
     /camera Acessar a câmera de monitoramento"""
     bot.send_message(message.chat.id, text)
 
