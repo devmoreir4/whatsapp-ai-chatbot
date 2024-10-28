@@ -22,7 +22,7 @@ def get_river_level():
                 div_with_nivel = element.find_next("div", {"class": "count"})
                 if div_with_nivel:
                     level = div_with_nivel.text.strip()
-                    return f"O nível atual do rio é de {level}"
+                    return f"O nível atual do rio é de {level} m"
     else:
         return "Erro ao acessar o site."
 
