@@ -8,10 +8,24 @@ from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 # from datetime import datetime, timedelta
 
+import matplotlib
+matplotlib.use('Agg') # backend não interativo
+
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 bot = telebot.TeleBot(TOKEN)
+
+dados_modificados = None
+
+def load_and_replace_data():
+    global dados_modificados
+    arquivo_xlsx = 'river_data.xlsx'
+    df = pd.read_excel(arquivo_xlsx)
+    dados_modificados = df.replace({"Dado Nulo": np.nan, 999999.0: np.nan})
+    print("Data loaded and replaced.")
+
+load_and_replace_data()
 
 def get_river_level():
     url = "http://alertadecheias.inea.rj.gov.br/alertadecheias/214109520.html"
@@ -48,12 +62,9 @@ def get_quota():
 
 def generate_daily_graph():
 
-    arquivo_xlsx = 'river_data.xlsx'
+    global dados_modificados
 
-    df = pd.read_excel(arquivo_xlsx)
-
-    dados_filtrados = df.tail(48)
-    dados_filtrados.replace({"Dado Nulo": np.nan, 999999.0: np.nan}, inplace=True)
+    dados_filtrados = dados_modificados.tail(48)
 
     plt.figure(figsize=(10, 5))
     plt.plot(dados_filtrados['Hora'], dados_filtrados['Último Nível'], marker='o', color='#2F57FF', label='Último Nível')
