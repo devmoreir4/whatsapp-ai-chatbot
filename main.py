@@ -1,8 +1,12 @@
 import os
 import requests
 import telebot
+import pandas as pd
+import numpy as np
+import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
+# from datetime import datetime, timedelta
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
@@ -42,6 +46,30 @@ def get_quota():
     else:
         return "Erro ao acessar o site."
 
+def generate_daily_graph():
+
+    arquivo_xlsx = 'river_data.xlsx'
+
+    df = pd.read_excel(arquivo_xlsx)
+
+    dados_filtrados = df.tail(48)
+    dados_filtrados.replace({"Dado Nulo": np.nan, 999999.0: np.nan}, inplace=True)
+
+    plt.figure(figsize=(10, 5))
+    plt.plot(dados_filtrados['Hora'], dados_filtrados['Último Nível'], marker='o', color='#2F57FF', label='Último Nível')
+    plt.title('Nível do Rio nas Últimas 24 Horas')
+    plt.xlabel('Hora')
+    plt.ylabel('Último Nível (m)')
+    plt.ylim(0, 3)
+    plt.xticks(rotation=45)
+    plt.legend()
+    
+    grafico_path = './data/daily_graph.png'
+    plt.savefig(grafico_path)
+    plt.close()
+    
+    return grafico_path
+
 @bot.message_handler(commands=["nivel"])
 def nivel(message):
     river_level = get_river_level()
@@ -54,9 +82,13 @@ def cota(message):
     bot.send_message(message.chat.id, "A cota de transbordamento é o nível crítico de altura da água em um rio. Ela indica o ponto em que as inundações se tornam iminentes ou começam a ocorrer.\n\n " + flood_quota)
     bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
-@bot.message_handler(commands=["grafico"])
-def grafico(message):
-    bot.send_message(message.chat.id, "Exibindo o gráfico do histórico...")
+@bot.message_handler(commands=["grafico_diario"])
+def grafico_diario(message):
+
+    grafico_path = generate_daily_graph()
+    
+    with open(grafico_path, 'rb') as graph:
+        bot.send_photo(message.chat.id, graph)
     bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
 @bot.message_handler(commands=["grafico_anual"])
@@ -71,7 +103,7 @@ def grafico(message):
 
 @bot.message_handler(commands=["grafico_semanal"])
 def grafico(message):
-    bot.send_message(message.chat.id, "Exibindo o gráfico dos ultimos 7 dias...")
+    bot.send_message(message.chat.id, "Exibindo o gráfico semanal...")
     bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
 @bot.message_handler(commands=["camera"])
@@ -85,7 +117,7 @@ def opcao1(message):
     O que você quer? (Clique em uma opção)
     /nivel Consultar o nível do rio
     /cota Consultar a cota de transbordamento
-    /grafico Exibir gráfico do histórico do nível do rio
+    /grafico_diario Exibir gráfico do nível do rio nas últimas 24 horas
     /grafico_anual Exibir gráfico do nível do rio no último ano
     /grafico_mensal Exibir gráfico do nível do rio nos últimos 30 dias
     /grafico_semanal Exibir gráfico do nível do rio nos últimos 7 dias
