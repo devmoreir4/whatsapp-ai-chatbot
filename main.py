@@ -6,7 +6,7 @@ import numpy as np
 import matplotlib.pyplot as plt
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
-# from datetime import datetime, timedelta
+from datetime import datetime
 
 import matplotlib
 matplotlib.use('Agg') # backend não interativo
@@ -81,6 +81,72 @@ def generate_daily_graph():
     
     return grafico_path
 
+def get_river_data():
+    url = "http://alertadecheias.inea.rj.gov.br/alertadecheias/214109520.html"
+    response = requests.get(url)
+
+    if response.status_code == 200:
+        soup = BeautifulSoup(response.text, "html.parser")
+        table = soup.find("table", {"id": "Table"})
+        
+        if table:
+            data = []
+            rows = table.find_all("tr")
+            
+            for row in rows:
+                columns = row.find_all("td")
+                row_data = [col.text.strip() for col in columns]
+                if row_data:
+                    data.append(row_data)
+            
+            return data
+        else:
+            print("Tabela não encontrada.")
+            return []
+    else:
+        print("Erro ao acessar o site.")
+        return []
+
+def save_to_excel(data, filename="dados.xlsx"):
+    df = pd.DataFrame(data, columns=[
+        "Data e Hora", "Chuva (mm) - Último", "Chuva (mm) - 1h", "Chuva (mm) - 4h", 
+        "Chuva (mm) - 24h", "Chuva (mm) - 96h", "Chuva (mm) - 30d", "Nível do rio (m) - Último"
+    ])
+    df.to_excel(filename, index=False)
+    return df
+
+def plot_daily_river_level(df):
+    # Filtrando apenas as colunas "Data e Hora" e "Nível do rio (m) - Último"
+    df_filtered = df[["Data e Hora", "Nível do rio (m) - Último"]].copy()
+    
+    # Convertendo a coluna "Data e Hora" para o formato datetime
+    df_filtered["Data e Hora"] = pd.to_datetime(df_filtered["Data e Hora"], format="%d/%m/%Y %H:%M")
+    
+    # Filtrando apenas os dados da data atual
+    today = datetime.today().date()
+    df_today = df_filtered[df_filtered["Data e Hora"].dt.date == today]
+    
+    # Extraindo a hora e o último nível para o gráfico
+    df_today["Hora"] = df_today["Data e Hora"].dt.strftime("%H:%M")
+    df_today["Último Nível"] = pd.to_numeric(df_today["Nível do rio (m) - Último"], errors="coerce")
+    
+    # Plotando o gráfico
+    plt.figure(figsize=(10, 5))
+    plt.plot(df_today["Hora"], df_today["Último Nível"], marker='o', color='#2F57FF', label='Último Nível')
+    plt.title('Nível do Rio nas Últimas 24 Horas')
+    plt.xlabel('Hora')
+    plt.ylabel('Último Nível (m)')
+    plt.ylim(0, 3)
+    plt.xticks(rotation=45)
+    plt.legend()
+    
+    # Salvando o gráfico
+    grafico_path = './data/grafico_diario.png'
+    plt.savefig(grafico_path)
+    plt.close()
+    
+    return grafico_path
+
 @bot.message_handler(commands=["nivel"])
 def nivel(message):
     river_level = get_river_level()
@@ -96,25 +162,21 @@ def cota(message):
 @bot.message_handler(commands=["grafico_diario"])
 def grafico_diario(message):
 
-    grafico_path = generate_daily_graph()
+    river_data = get_river_data()
+    if river_data:
+        df = save_to_excel(river_data)
+        grafico_path = plot_daily_river_level(df)
+        print(f"Gráfico salvo em: {grafico_path}")
+
+    # grafico_path = generate_daily_graph()
     
-    with open(grafico_path, 'rb') as graph:
-        bot.send_photo(message.chat.id, graph)
-    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
+    # with open(grafico_path, 'rb') as graph:
+    #     bot.send_photo(message.chat.id, graph)
+    # bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
-@bot.message_handler(commands=["grafico_anual"])
+@bot.message_handler(commands=["grafico"])
 def grafico(message):
-    bot.send_message(message.chat.id, "Exibindo o gráfico anual...")
-    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
-
-@bot.message_handler(commands=["grafico_mensal"])
-def grafico(message):
-    bot.send_message(message.chat.id, "Exibindo o gráfico mensal...")
-    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
-
-@bot.message_handler(commands=["grafico_semanal"])
-def grafico(message):
-    bot.send_message(message.chat.id, "Exibindo o gráfico semanal...")
+    bot.send_message(message.chat.id, "Exibindo o gráfico do historico...")
     bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao1")
 
 @bot.message_handler(commands=["camera"])
@@ -129,9 +191,7 @@ def opcao1(message):
     /nivel Consultar o nível do rio
     /cota Consultar a cota de transbordamento
     /grafico_diario Exibir gráfico do nível do rio nas últimas 24 horas
-    /grafico_anual Exibir gráfico do nível do rio no último ano
-    /grafico_mensal Exibir gráfico do nível do rio nos últimos 30 dias
-    /grafico_semanal Exibir gráfico do nível do rio nos últimos 7 dias
+    /grafico Exibir gráfico do histórico do nível do rio
     /camera Acessar a câmera de monitoramento"""
     bot.send_message(message.chat.id, text)
 
