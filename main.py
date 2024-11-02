@@ -16,17 +16,6 @@ TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
 
 bot = telebot.TeleBot(TOKEN)
 
-dados_modificados = None
-
-def load_and_replace_data():
-    global dados_modificados
-    arquivo_xlsx = 'river_data.xlsx'
-    df = pd.read_excel(arquivo_xlsx)
-    dados_modificados = df.replace({"Dado Nulo": np.nan, 999999.0: np.nan})
-    print("Data loaded and replaced.")
-
-load_and_replace_data()
-
 def get_river_level():
     url = "http://alertadecheias.inea.rj.gov.br/alertadecheias/214109520.html"
     response = requests.get(url)
@@ -59,27 +48,6 @@ def get_quota():
                     return f"A cota de transbordamento atual é de {quota}"
     else:
         return "Erro ao acessar o site."
-
-def generate_daily_graph():
-
-    global dados_modificados
-
-    dados_filtrados = dados_modificados.tail(48)
-
-    plt.figure(figsize=(10, 5))
-    plt.plot(dados_filtrados['Hora'], dados_filtrados['Último Nível'], marker='o', color='#2F57FF', label='Último Nível')
-    plt.title('Nível do Rio nas Últimas 24 Horas')
-    plt.xlabel('Hora')
-    plt.ylabel('Último Nível (m)')
-    plt.ylim(0, 3)
-    plt.xticks(rotation=45)
-    plt.legend()
-    
-    grafico_path = './data/daily_graph.png'
-    plt.savefig(grafico_path)
-    plt.close()
-    
-    return grafico_path
 
 def get_river_data():
     url = "http://alertadecheias.inea.rj.gov.br/alertadecheias/214109520.html"
