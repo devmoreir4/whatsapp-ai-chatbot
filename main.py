@@ -4,6 +4,7 @@ import telebot
 import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
+from matplotlib.ticker import MaxNLocator
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from datetime import datetime
@@ -93,6 +94,8 @@ def plot_daily_river_level(df):
     
     today = datetime.today().date()
     df_today = df_filtered[df_filtered["Data e Hora"].dt.date == today].copy()
+
+    df_today["Nível do rio (m) - Último"] = df_today["Nível do rio (m) - Último"].replace("Dado Nulo", pd.NA)
     
     # extraindo a hora e o último nível para o gráfico
     df_today["Hora"] = df_today["Data e Hora"].dt.strftime("%H:%M")
@@ -105,6 +108,8 @@ def plot_daily_river_level(df):
     plt.ylabel('Último Nível (m)')
     plt.ylim(0, 3)
     plt.xticks(rotation=45)
+    plt.gca().invert_xaxis()
+    plt.gca().xaxis.set_major_locator(MaxNLocator(nbins=10))
     plt.legend()
     
     grafico_path = './data/grafico_diario.png'
