@@ -14,6 +14,8 @@ matplotlib.use('Agg') # backend não interativo
 
 load_dotenv()
 TOKEN = os.getenv("TELEGRAM_BOT_TOKEN")
+OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
+city = "Bom Jesus do Itabapoana"
 
 bot = telebot.TeleBot(TOKEN)
 
@@ -161,6 +163,52 @@ def opcao1(message):
     /grafico_diario Exibir gráfico do nível do rio nas últimas 24 horas
     /grafico Exibir gráfico do histórico do nível do rio
     /camera Acessar a câmera de monitoramento"""
+    bot.send_message(message.chat.id, text)
+
+def get_weather(city):
+    link = f"https://api.openweathermap.org/data/2.5/weather?q={city}&appid={OPENWEATHER_API_KEY}&lang=pt_br"
+    response = requests.get(link)
+    if response.status_code == 200:
+        data = response.json()
+        descricao = data['weather'][0]['description']
+        temperatura = data['main']['temp'] - 273.15  # Kelvin to Celsius
+        umidade = data['main']['humidity']
+        vento = data['wind']['speed']
+        
+        return {
+            "descricao": descricao,
+            "temperatura": temperatura,
+            "umidade": umidade,
+            "vento": vento
+        }
+    else:
+        return None
+
+@bot.message_handler(commands=["temperatura"])
+def temperatura(message):
+    clima = get_weather(city)
+    bot.send_message(message.chat.id, clima)
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao2")
+
+@bot.message_handler(commands=["umidade"])
+def umidade(message):
+    clima = get_weather(city)
+    bot.send_message(message.chat.id, clima)
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao2")
+
+@bot.message_handler(commands=["vento"])
+def vento(message):
+    clima = get_weather(city)
+    bot.send_message(message.chat.id, clima)
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao2")
+
+@bot.message_handler(commands=["opcao2"])
+def opcao2(message):
+    text = """
+    O que você quer? (Clique em uma opção)
+    /temperatura Consultar a temperatura atual
+    /umidade Consultar a umidade do ar
+    /vento Consultar a velocidade do vento"""
     bot.send_message(message.chat.id, text)
 
 def check(message):
