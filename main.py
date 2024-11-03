@@ -187,19 +187,37 @@ def get_weather(city):
 @bot.message_handler(commands=["temperatura"])
 def temperatura(message):
     clima = get_weather(city)
-    bot.send_message(message.chat.id, clima)
+
+    if clima:
+        resposta = f"Clima em {city.capitalize()}: {clima['descricao']}. Temperatura: {clima['temperatura']:.2f}ºC"
+        bot.send_message(message.chat.id, resposta)
+    else:
+        bot.send_message(message.chat.id, "Erro ao acessar a API do clima.")
+    
     bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao2")
 
 @bot.message_handler(commands=["umidade"])
 def umidade(message):
     clima = get_weather(city)
-    bot.send_message(message.chat.id, clima)
+
+    if clima:
+        resposta = f"Clima em {city.capitalize()}: {clima['descricao']}. Umidade: {clima['umidade']}%"
+        bot.send_message(message.chat.id, resposta)
+    else:
+        bot.send_message(message.chat.id, "Erro ao acessar a API do clima.")
+    
     bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao2")
 
 @bot.message_handler(commands=["vento"])
 def vento(message):
     clima = get_weather(city)
-    bot.send_message(message.chat.id, clima)
+
+    if clima:
+        resposta = f"Clima em {city.capitalize()}: {clima['descricao']}. Velocidade do vento: {clima['vento']:.2f} m/s"
+        bot.send_message(message.chat.id, resposta)
+    else:
+        bot.send_message(message.chat.id, "Erro ao acessar a API do clima.")
+    
     bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao2")
 
 @bot.message_handler(commands=["opcao2"])
