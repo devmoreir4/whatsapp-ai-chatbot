@@ -250,12 +250,12 @@ def plot_temperature_forecast():
         dates = [datetime.strptime(date, "%Y-%m-%d %H:%M:%S") for date in dates]
         
         plt.figure(figsize=(10, 5))
-        plt.plot(dates, temperatures, marker='o', linestyle='-', color='b')
+        plt.plot(dates, temperatures, marker='o', color='#f38600', label='Temperatura Média')
         
         plt.title('Previsão de Temperatura para os Próximos 5 Dias')
         plt.ylabel('Temperatura (°C)')
-        # plt.xticks(rotation=45)
         plt.grid()
+        plt.legend()
         plt.tight_layout()
 
         grafico_path = './data/grafico_previsao.png'
