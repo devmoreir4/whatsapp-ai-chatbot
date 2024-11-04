@@ -221,13 +221,70 @@ def vento(message):
     
     bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao2")
 
+def get_5_day_forecast():
+    lat = -21.1339
+    lon = -41.6797
+    url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric&lang=pt_br"
+    
+    response = requests.get(url)
+    
+    if response.status_code == 200:
+        data = response.json()
+
+        temperatures = []
+        dates = []
+        
+        for entry in data['list']:
+            temperatures.append(entry['main']['temp'])
+            dates.append(entry['dt_txt'])
+        
+        return temperatures, dates
+    else:
+        print("Erro:", response.status_code, response.json())
+        return None, None
+
+def plot_temperature_forecast():
+    temperatures, dates = get_5_day_forecast()
+    
+    if temperatures and dates:
+        dates = [datetime.strptime(date, "%Y-%m-%d %H:%M:%S") for date in dates]
+        
+        plt.figure(figsize=(10, 5))
+        plt.plot(dates, temperatures, marker='o', linestyle='-', color='b')
+        
+        plt.title('Previsão de Temperatura para os Próximos 5 Dias')
+        plt.ylabel('Temperatura (°C)')
+        # plt.xticks(rotation=45)
+        plt.grid()
+        plt.tight_layout()
+
+        grafico_path = './data/grafico_previsao.png'
+        plt.savefig(grafico_path)
+        plt.close()
+        
+        return grafico_path
+    else:
+        return None
+
+@bot.message_handler(commands=["previsao"])
+def previsao(message):
+    grafico_path = plot_temperature_forecast()
+    
+    if grafico_path:
+        with open(grafico_path, 'rb') as graph:
+            bot.send_photo(message.chat.id, graph)
+    else:
+        bot.send_message(message.chat.id, "Não foi possível obter os dados de temperatura.")
+    bot.send_message(message.chat.id, "Clique aqui para voltar: /opcao2")
+
 @bot.message_handler(commands=["opcao2"])
 def opcao2(message):
     text = """
     O que você quer? (Clique em uma opção)
     /temperatura Consultar a temperatura atual
     /umidade Consultar a umidade do ar
-    /vento Consultar a velocidade do vento"""
+    /vento Consultar a velocidade do vento
+    /previsao Consultar a previsão dos próximos 5 dias"""
     bot.send_message(message.chat.id, text)
     bot.send_message(message.chat.id, "Clique aqui para voltar: /inicio")
 
