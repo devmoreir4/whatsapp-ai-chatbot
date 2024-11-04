@@ -5,6 +5,7 @@ import pandas as pd
 import numpy as np
 import matplotlib.pyplot as plt
 from matplotlib.ticker import MaxNLocator
+import matplotlib.dates as mdates
 from bs4 import BeautifulSoup
 from dotenv import load_dotenv
 from datetime import datetime
@@ -254,6 +255,9 @@ def plot_temperature_forecast():
         
         plt.title('Previsão de Temperatura para os Próximos 5 Dias')
         plt.ylabel('Temperatura (°C)')
+
+        plt.gca().xaxis.set_major_formatter(mdates.DateFormatter('%d/%m/%y'))
+
         plt.grid()
         plt.legend()
         plt.tight_layout()
