@@ -1,26 +1,30 @@
 import os
-
 from decouple import config
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
-from langchain_community.document_loaders import PyPDFLoader
+from langchain_community.document_loaders import PyPDFLoader, CSVLoader
 from langchain_huggingface import HuggingFaceEmbeddings
+
 
 os.environ['HUGGINGFACE_API_KEY'] = config('HUGGINGFACE_API_KEY')
 
+
 if __name__ == '__main__':
-    file_path = '/app/rag/data/test.pdf'
-    loader = PyPDFLoader(file_path)
-    docs = loader.load()
+    pdf_file_path = '/app/rag/data/guidelines.pdf'
+    pdf_loader = PyPDFLoader(pdf_file_path)
+    pdf_docs = pdf_loader.load()
+
+    csv_file_path = '/app/rag/data/river_data.csv'
+    csv_loader = CSVLoader(file_path=csv_file_path)
+    csv_docs = csv_loader.load()
 
     text_splitter = RecursiveCharacterTextSplitter(
         chunk_size=1000,
         chunk_overlap=200,
     )
-    chunks = text_splitter.split_documents(
-        documents=docs,
-    )
+    pdf_chunks = text_splitter.split_documents(pdf_docs)
+    csv_chunks = text_splitter.split_documents(csv_docs)
 
     persist_directory = '/app/chroma_data'
 
@@ -29,6 +33,5 @@ if __name__ == '__main__':
         embedding_function=embedding,
         persist_directory=persist_directory,
     )
-    vector_store.add_documents(
-        documents=chunks,
-    )
+
+    vector_store.add_documents(documents=pdf_chunks + csv_chunks)
