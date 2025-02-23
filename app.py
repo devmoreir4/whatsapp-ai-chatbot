@@ -1,11 +1,19 @@
-from flask import Flask, request, jsonify
+from flask import Flask, request, jsonify, send_from_directory
 
 from bot.ai_bot import AIBot
 from services.waha import Waha
+from commands.commands import handle_command
+
+import os
 
 
 app = Flask(__name__)
 
+# rota alternativa para imagens
+@app.route('/images/<path:filename>')
+def serve_image(filename):
+    image_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'commands', 'images')
+    return send_from_directory(image_dir, filename)
 
 @app.route('/chatbot/webhook/', methods=['POST'])
 def webhook():
@@ -18,6 +26,11 @@ def webhook():
         return jsonify({'status': 'success', 'message': 'Mensagem de grupo ignorada.'}), 200
 
     waha = Waha()
+
+    if received_message.startswith("/"):
+        if handle_command(waha, chat_id, received_message):
+            return jsonify({'status': 'success'}), 200
+
     ai_bot = AIBot()
 
     waha.start_typing(chat_id=chat_id)

@@ -62,3 +62,22 @@ class Waha:
             json=payload,
             headers=headers,
         )
+
+    # needs pro version
+    # def send_image(self, chat_id, image_path, caption=""):
+    #     url = f'{self.__api_url}/api/sendMedia'
+    #     with open(image_path, 'rb') as image_file:
+    #         print('SEND IMAGE WAHA CLASS', image_path)
+    #         files = {
+    #             'file': image_file
+    #         }
+    #         payload = {
+    #             'session': 'default',
+    #             'chatId': chat_id,
+    #             'caption': caption,
+    #         }
+    #         requests.post(
+    #             url=url,
+    #             data=payload,
+    #             files=files,
+    #         )
