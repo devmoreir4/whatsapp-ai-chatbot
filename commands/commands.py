@@ -75,27 +75,30 @@ def get_river_data():
     except Exception as e:
         return None
 
-def save_to_excel(data, filename="dados.xlsx"):
-    columns = [
-        "Data e Hora", "Chuva (mm) - Último", "Chuva (mm) - 1h", 
-        "Chuva (mm) - 4h", "Chuva (mm) - 24h", "Chuva (mm) - 96h", 
-        "Chuva (mm) - 30d", "Nível do rio (m) - Último"
-    ]
-    df = pd.DataFrame(data, columns=columns)
-    df.to_excel(filename, index=False)
-    return df
-
-def plot_daily_river_level(df, output_path='./commands/images/grafico_diario.png'):
+def plot_daily_river_level(data, output_path='./commands/images/grafico_diario.png'):
     try:
-        df_filtered = df[["Data e Hora", "Nível do rio (m) - Último"]].copy()
-        df_filtered["Data e Hora"] = pd.to_datetime(df_filtered["Data e Hora"], format="%d/%m/%Y %H:%M")
+        # Criar DataFrame com os dados coletados
+        columns = [
+            "Data e Hora", "Chuva (mm) - Último", "Chuva (mm) - 1h", 
+            "Chuva (mm) - 4h", "Chuva (mm) - 24h", "Chuva (mm) - 96h", 
+            "Chuva (mm) - 30d", "Nível do rio (m) - Último"
+        ]
+        df = pd.DataFrame(data, columns=columns)
+
+        # Converter para datetime e filtrar o dia atual
+        df["Data e Hora"] = pd.to_datetime(df["Data e Hora"], format="%d/%m/%Y %H:%M")
         today = datetime.today().date()
-        df_today = df_filtered[df_filtered["Data e Hora"].dt.date == today].copy()
+        df_today = df[df["Data e Hora"].dt.date == today].copy()
+
+        # Tratar valores não numéricos
         df_today["Nível do rio (m) - Último"] = pd.to_numeric(
             df_today["Nível do rio (m) - Último"].replace("Dado Nulo", pd.NA), errors="coerce"
         )
+
+        # Criar coluna com horários
         df_today["Hora"] = df_today["Data e Hora"].dt.strftime("%H:%M")
 
+        # Plotar gráfico
         plt.figure(figsize=(10, 5))
         plt.plot(df_today["Hora"], df_today["Nível do rio (m) - Último"], marker='o', color='#2F57FF', label='Último Nível')
         plt.title('Nível do Rio nas Últimas 24 Horas')
@@ -114,6 +117,7 @@ def plot_daily_river_level(df, output_path='./commands/images/grafico_diario.png
         return output_path
     
     except Exception as e:
+        print(f"Erro ao gerar gráfico: {e}")
         return None
 
 # ------- informações do clima -------
@@ -144,12 +148,13 @@ def get_weather(city):
         return None
 
 def get_5_day_forecast():
-    OPENWEATHER_API_KEY = os.getenv("OPENWEATHER_API_KEY")
     if not OPENWEATHER_API_KEY:
         return None, None
+    
     lat = -21.1339
     lon = -41.6797
     url = f"https://api.openweathermap.org/data/2.5/forecast?lat={lat}&lon={lon}&appid={OPENWEATHER_API_KEY}&units=metric&lang=pt_br"
+    
     try:
         response = requests.get(url)
         if response.status_code == 200:
@@ -202,8 +207,7 @@ def handle_cota(waha, chat_id):
 def handle_grafico_diario(waha, chat_id):
     data = get_river_data()
     if data:
-        df = save_to_excel(data)
-        grafico_path = plot_daily_river_level(df)
+        grafico_path = plot_daily_river_level(data)
         if grafico_path:
             filename = os.path.basename(grafico_path)
             image_url = f"{SERVER_URL}/images/{filename}"
@@ -260,7 +264,7 @@ def handle_command(waha, chat_id, message):
         handle_nivel(waha, chat_id)
     elif message.startswith("/cota"):
         handle_cota(waha, chat_id)
-    elif message.startswith("/grafico_diario"):
+    elif message.startswith("/graficodiario"):
         handle_grafico_diario(waha, chat_id)
     elif message.startswith("/camera"):
         handle_camera(waha, chat_id)
