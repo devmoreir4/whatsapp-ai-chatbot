@@ -4,5 +4,5 @@ venv
 .sessions
 __pycache__/
 chroma_data
-# rag/data
-test.txt
+# /rag/data
+# /commands/images
