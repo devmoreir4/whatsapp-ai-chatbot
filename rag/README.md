@@ -73,7 +73,7 @@ R: O prazo mínimo é de 30 dias úteis.
 
 ## Reindexação
 
-Para atualizar a base de conhecimento:
+Sempre reindexe após adicionar/remover arquivos. Para atualizar a base de conhecimento:
 
 ```bash
 # Do host
@@ -82,11 +82,3 @@ docker exec -it wpp_bot_api python /app/rag/rag.py
 # Dentro do container
 python /app/rag/rag.py
 ```
-
-## Importante
-
-- **Sempre reindexe** após adicionar/remover arquivos
-- **Textos bem estruturados** geram melhores respostas
-- **O bot responde apenas** com base nos documentos carregados
-- **Arquivos muito grandes** podem demorar para processar
-- **Use português brasileiro** para melhores resultados
