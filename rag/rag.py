@@ -65,8 +65,9 @@ def create_vector_store(documents, persist_directory=None):
     chunks = text_splitter.split_documents(documents)
     print(f"Created {len(chunks)} text chunks")
 
+    embedding_model = config('OPENAI_EMBEDDING_MODEL', default='text-embedding-3-small')
     embedding = OpenAIEmbeddings(
-        model="text-embedding-3-small",
+        model=embedding_model,
         openai_api_key=config('OPENAI_API_KEY')
     )
 

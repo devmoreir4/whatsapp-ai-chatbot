@@ -1,47 +1,56 @@
-from flask import Flask, request, jsonify
+import asyncio
+from fastapi import FastAPI, Request, HTTPException
 from decouple import config
+import uvicorn
 
-from bot.ai_bot import AIBot
-from services.waha import Waha
-
-
-app = Flask(__name__)
+from services.message_buffer import buffer_message, cleanup_expired_tasks, get_buffer_status
 
 
-@app.route('/chatbot/webhook/', methods=['POST'])
-def webhook():
-    data = request.json
-    chat_id = data['payload']['from']
-    received_message = data['payload']['body']
-    is_group = '@g.us' in chat_id
+app = FastAPI(title="WhatsApp AI Chatbot", version="1.0.0")
 
-    if is_group:
-        return jsonify({'status': 'success', 'message': 'Group message ignored.'}), 200
 
-    waha = Waha()
-    ai_bot = AIBot()
+@app.post('/chatbot/webhook/')
+async def webhook(request: Request):
+    try:
+        data = await request.json()
+        chat_id = data['payload']['from']
+        received_message = data['payload']['body']
+        is_group = '@g.us' in chat_id
 
-    waha.start_typing(chat_id=chat_id)
-    history_limit = config('HISTORY_LIMIT', default=10, cast=int)
-    history_messages = waha.get_history_messages(
-        chat_id=chat_id,
-        limit=history_limit,
-    )
-    response_message = ai_bot.get_response(
-        question=received_message,
-        chat_history=history_messages,
-    )
-    waha.send_message(
-        chat_id=chat_id,
-        message=response_message,
-    )
-    waha.stop_typing(chat_id=chat_id)
+        if is_group:
+            return {'status': 'success', 'message': 'Group message ignored.'}
 
-    return jsonify({'status': 'success'}), 200
+        await buffer_message(chat_id, received_message)
+
+        return {'status': 'success', 'message': 'Message buffered for debounce'}
+
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
+
+
+@app.get('/health')
+async def health_check():
+    return {'status': 'healthy', 'service': 'whatsapp-ai-chatbot'}
+
+
+@app.get('/buffer/status/{chat_id}')
+async def get_buffer_status_endpoint(chat_id: str):
+    try:
+        status = await get_buffer_status(chat_id)
+        return status
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error getting buffer status: {str(e)}")
+
+
+@app.post('/buffer/cleanup')
+async def cleanup_buffer():
+    try:
+        await cleanup_expired_tasks()
+        return {'status': 'success', 'message': 'Expired tasks cleaned up'}
+    except Exception as e:
+        raise HTTPException(status_code=500, detail=f"Error cleaning up tasks: {str(e)}")
 
 
 if __name__ == '__main__':
-    host = config('FLASK_HOST', default='0.0.0.0')
-    port = config('FLASK_PORT', default=5000, cast=int)
-    debug = config('FLASK_DEBUG', default=True, cast=bool)
-    app.run(host=host, port=port, debug=debug)
+    debug = config('API_DEBUG', default=False, cast=bool)
+    uvicorn.run(app, host="0.0.0.0", port=5000, log_level="debug" if debug else "info")

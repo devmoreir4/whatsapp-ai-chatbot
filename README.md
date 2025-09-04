@@ -15,8 +15,8 @@
   <a href="https://www.python.org/">
     <img src="https://img.shields.io/badge/Python-3.11+-blue?style=flat-square&logo=python" alt="Python">
   </a>
-  <a href="https://flask.palletsprojects.com/">
-    <img src="https://img.shields.io/badge/Flask-3.1.2+-green?style=flat-square&logo=flask" alt="Flask">
+  <a href="https://fastapi.tiangolo.com/">
+    <img src="https://img.shields.io/badge/FastAPI-0.116.1+-green?style=flat-square&logo=fastapi" alt="FastAPI">
   </a>
   <a href="https://www.docker.com/">
     <img src="https://img.shields.io/badge/Docker-Compose-blue?style=flat-square&logo=docker" alt="Docker">
@@ -34,9 +34,10 @@ Um bot de inteligência artificial integrado ao WhatsApp que utiliza técnicas d
 ## Descrição
 
 O projeto **WhatsApp AI Chatbot** integra:
-- Uma API desenvolvida em Flask para processar mensagens e comandos do WhatsApp;
-- Um módulo de IA que utiliza LangChain e o modelo ChatGroq (llama-3.1-8b-instant) para fornecer respostas contextuais;
+- Uma API desenvolvida em FastAPI para processar mensagens e comandos do WhatsApp;
+- Um módulo de IA que utiliza LangChain e modelos OpenAI para fornecer respostas contextuais;
 - Sistema RAG avançado para indexação e recuperação de informações a partir de múltiplos formatos de documento;
+- Sistema de debounce inteligente para agrupar mensagens rápidas;
 - Suporte a diversos tipos de arquivo (PDF, CSV, TXT, MD, DOC, DOCX);
 - Orquestração via Docker e Docker Compose para facilitar a implantação e escalabilidade do sistema.
 
@@ -46,30 +47,32 @@ O projeto **WhatsApp AI Chatbot** integra:
   - Busca semântica em documentos carregados
   - Respostas contextuais baseadas no conhecimento disponível
   - Suporte a múltiplos formatos de arquivo
-- **Interface Simples:**
-  - Respostas diretas baseadas em perguntas
-  - Sem necessidade de comandos especiais
   - Conversação natural e intuitiva
 - **Integração WhatsApp:**
   - Respostas em tempo real via WhatsApp
   - Histórico de conversa mantido
   - Indicadores de digitação
-- **Base de Conhecimento Flexível:**
-  - Adicione seus próprios documentos
-  - Reindexação automática
-  - Busca inteligente em grandes volumes de texto
+- **API Moderna e Performática:**
+  - Processamento assíncrono com FastAPI
+  - Documentação automática em `/docs`
+  - Health check em `/health`
+- **Sistema de Debounce Inteligente:**
+  - Agrupa mensagens rápidas para evitar spam
+  - Configurável via variáveis de ambiente
+  - Melhora a experiência do usuário
 
 
 ## Tecnologias Utilizadas
 
 - **Python 3.11**
-- **Flask:** Framework para desenvolvimento da API web
+- **FastAPI:** Framework moderno e de alta performance para desenvolvimento da API web
 - **Docker & Docker Compose:** Para containerização e orquestração dos serviços
 - **Waha API:** Serviço utilizado para a comunicação e integração com o WhatsApp
 - **LangChain:** Framework para integração com modelos de linguagem e recuperação de informações
-- **ChatGroq (llama-3.1-8b-instant):** Modelo de linguagem padrão para geração de respostas inteligentes (configurável)
+- **OpenAI:** Modelos de linguagem para geração de respostas inteligentes (configurável)
 - **ChromaDB:** Vector store para indexação e busca semântica dos dados
 - **OpenAI Embeddings:** Geração de embeddings para processamento dos documentos
+- **Redis:** Sistema de cache e debounce de mensagens
 - **Múltiplos Loaders:** Suporte a PDF, CSV, TXT, MD, DOC, DOCX
 
 
@@ -90,8 +93,17 @@ O projeto **WhatsApp AI Chatbot** integra:
    ```
 
 4. **Acesso aos Serviços:**
-    - API Flask: Disponível na porta [5000](http://127.0.0.1:5000).
-    - Serviço Waha (WhatsApp): Disponível na porta [3000](http://127.0.0.1:3000).
+    - **API FastAPI**: Disponível na porta 5000
+    - **Documentação automática**: [http://127.0.0.1:5000/docs](http://127.0.0.1:5000/docs)
+    - **Serviço Waha (WhatsApp)**: Disponível na porta [3000](http://127.0.0.1:3000)
+    - **Redis**: Disponível na porta 6379
+
+    ### Endpoints da API
+
+    - **POST** `/chatbot/webhook/` - Webhook para receber mensagens do WhatsApp
+    - **GET** `/health` - Status de saúde da aplicação
+    - **GET** `/buffer/status/{chat_id}` - Status do buffer de mensagens
+    - **POST** `/buffer/cleanup` - Limpeza de tarefas expiradas
 
 5. **Configuração do WhatsApp:**
     - Acesse o [Dashboard do WAHA](http://[::1]:3000/dashboard/).

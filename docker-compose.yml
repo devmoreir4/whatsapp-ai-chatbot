@@ -1,10 +1,23 @@
 services:
 
+  redis:
+    image: redis:latest
+    container_name: wpp_bot_redis
+    restart: always
+    ports:
+      - '6379:6379'
+    command: redis-server --appendonly yes
+    volumes:
+      - redis_data:/data
+
   waha:
     image: devlikeapro/waha:latest
     container_name: wpp_bot_waha
     restart: always
-
+    depends_on:
+      - redis
+    environment:
+      - WAHA_PRINT_QR=false
     ports:
       - '3000:3000'
 
@@ -18,10 +31,14 @@ services:
     volumes:
       - .:/app
       - ./chroma_data:/app/chroma_data
+    depends_on:
+      - redis
+      - waha
     environment:
-      - GROQ_API_KEY=${GROQ_API_KEY}
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - GROQ_MODEL=${GROQ_MODEL}
+      - OPENAI_MODEL=${OPENAI_MODEL}
+      - OPENAI_TEMPERATURE=${OPENAI_TEMPERATURE}
+      - OPENAI_EMBEDDING_MODEL=${OPENAI_EMBEDDING_MODEL}
       - RAG_SEARCH_K=${RAG_SEARCH_K}
       - RAG_CHUNK_SIZE=${RAG_CHUNK_SIZE}
       - RAG_CHUNK_OVERLAP=${RAG_CHUNK_OVERLAP}
@@ -30,4 +47,11 @@ services:
       - WAHA_API_URL=${WAHA_API_URL}
       - WAHA_SESSION=${WAHA_SESSION}
       - HISTORY_LIMIT=${HISTORY_LIMIT}
-      - FLASK_DEBUG=${FLASK_DEBUG}
+      - API_DEBUG=${API_DEBUG}
+      - REDIS_URL=${REDIS_URL}
+      - BUFFER_KEY_SUFIX=${BUFFER_KEY_SUFIX}
+      - DEBOUNCE_SECONDS=${DEBOUNCE_SECONDS}
+      - BUFFER_TTL=${BUFFER_TTL}
+
+volumes:
+  redis_data:

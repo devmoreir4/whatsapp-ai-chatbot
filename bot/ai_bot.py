@@ -6,22 +6,24 @@ from langchain.chains.combine_documents import create_stuff_documents_chain
 from langchain_chroma import Chroma
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
-from langchain_groq import ChatGroq
+from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 
-os.environ['GROQ_API_KEY'] = config('GROQ_API_KEY')
+os.environ['OPENAI_API_KEY'] = config('OPENAI_API_KEY')
 
 class AIBot:
     def __init__(self):
-        self.__model = config('GROQ_MODEL', default='llama-3.1-8b-instant')
+        self.__model = config('OPENAI_MODEL', default='gpt-3.5-turbo')
+        self.__temperature = config('OPENAI_TEMPERATURE', default=0.7, cast=float)
         self.__retriever = self.__build_retriever()
         self.__chain = self.__build_chain()
 
     def __build_retriever(self):
         persist_directory = config('CHROMA_PERSIST_DIR', default='/app/chroma_data')
 
+        embedding_model = config('OPENAI_EMBEDDING_MODEL', default='text-embedding-3-small')
         embedding = OpenAIEmbeddings(
-            model="text-embedding-3-small",
+            model=embedding_model,
             openai_api_key=config('OPENAI_API_KEY')
         )
 
@@ -60,9 +62,9 @@ class AIBot:
             ("human", "{input}"),
         ])
 
-        llm = ChatGroq(
+        llm = ChatOpenAI(
             model=self.__model,
-            temperature=0.7,
+            temperature=self.__temperature,
         )
 
         document_chain = create_stuff_documents_chain(llm, prompt)
@@ -79,7 +81,7 @@ class AIBot:
             elif message.get('role') == 'assistant':
                 formatted_history.append(AIMessage(content=message.get('content', '')))
 
-        docs = self.__retriever.get_relevant_documents(question)
+        docs = self.__retriever.invoke(question)
 
         response = self.__chain.invoke({
             "input": question,
