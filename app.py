@@ -1,19 +1,12 @@
-from flask import Flask, request, jsonify, send_from_directory
+from flask import Flask, request, jsonify
+from decouple import config
 
 from bot.ai_bot import AIBot
 from services.waha import Waha
-from commands.commands import handle_command
-
-import os
 
 
 app = Flask(__name__)
 
-# rota alternativa para imagens
-@app.route('/images/<path:filename>')
-def serve_image(filename):
-    image_dir = os.path.join(os.path.dirname(os.path.abspath(__file__)), 'commands', 'images')
-    return send_from_directory(image_dir, filename)
 
 @app.route('/chatbot/webhook/', methods=['POST'])
 def webhook():
@@ -23,24 +16,20 @@ def webhook():
     is_group = '@g.us' in chat_id
 
     if is_group:
-        return jsonify({'status': 'success', 'message': 'Mensagem de grupo ignorada.'}), 200
+        return jsonify({'status': 'success', 'message': 'Group message ignored.'}), 200
 
     waha = Waha()
-
-    if received_message.startswith("/"):
-        if handle_command(waha, chat_id, received_message):
-            return jsonify({'status': 'success'}), 200
-
     ai_bot = AIBot()
 
     waha.start_typing(chat_id=chat_id)
+    history_limit = config('HISTORY_LIMIT', default=10, cast=int)
     history_messages = waha.get_history_messages(
         chat_id=chat_id,
-        limit=10,
+        limit=history_limit,
     )
-    response_message = ai_bot.invoke(
-        history_messages=history_messages,
+    response_message = ai_bot.get_response(
         question=received_message,
+        chat_history=history_messages,
     )
     waha.send_message(
         chat_id=chat_id,
@@ -52,4 +41,7 @@ def webhook():
 
 
 if __name__ == '__main__':
-    app.run(host='0.0.0.0', port=5000, debug=True)
+    host = config('FLASK_HOST', default='0.0.0.0')
+    port = config('FLASK_PORT', default=5000, cast=int)
+    debug = config('FLASK_DEBUG', default=True, cast=bool)
+    app.run(host=host, port=port, debug=debug)

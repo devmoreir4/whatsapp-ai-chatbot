@@ -4,6 +4,11 @@ ENV PYTHONUNBUFFERED=1
 
 WORKDIR /app
 
+RUN apt-get update && apt-get install -y \
+    gcc \
+    g++ \
+    && rm -rf /var/lib/apt/lists/*
+
 COPY requirements.txt requirements.txt
 RUN python -m pip install --upgrade pip
 RUN pip install -r requirements.txt
@@ -15,4 +20,4 @@ ENV FLASK_APP=app.py
 
 EXPOSE 5000
 
-CMD ["flask", "run", "--host=0.0.0.0", "--port=5000", "--debug"]
+CMD ["python", "app.py"]

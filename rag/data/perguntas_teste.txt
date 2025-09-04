@@ -1,0 +1,86 @@
+# Perguntas de Teste para o RAG
+
+## Perguntas Básicas sobre a Empresa
+
+1. Qual é o nome da empresa?
+2. Qual o CNPJ da TechCorp?
+3. Qual o endereço da empresa?
+4. Qual o telefone de contato?
+5. Qual o email da empresa?
+6. Qual o site da TechCorp?
+
+## Perguntas sobre Horários
+
+7. Quais são os horários de funcionamento?
+8. A empresa funciona aos sábados?
+9. A empresa funciona aos domingos?
+10. A empresa funciona em feriados?
+
+## Perguntas sobre Serviços
+
+11. Quais serviços a TechCorp oferece?
+12. A empresa desenvolve aplicativos móveis?
+13. Vocês fazem consultoria em TI?
+14. Qual tipo de suporte técnico é oferecido?
+15. A empresa oferece suporte 24/7?
+
+## Perguntas sobre Políticas
+
+16. Qual o SLA de disponibilidade?
+17. Qual a garantia oferecida nos desenvolvimentos?
+18. Há desconto para pagamento à vista?
+19. Qual o prazo de resposta para emails?
+20. A empresa tem certificação ISO?
+
+## Perguntas sobre Processos
+
+21. Como funciona o processo de desenvolvimento?
+22. Quais são as etapas do processo de suporte?
+23. Como é classificada a prioridade dos chamados?
+24. Qual o prazo para atribuição de técnico?
+
+## Perguntas sobre Contatos
+
+25. Quem é o gerente comercial?
+26. Qual o email do departamento técnico?
+27. Quem é responsável pelo financeiro?
+28. Qual o telefone do comercial?
+
+## Perguntas sobre FAQ
+
+29. Qual o prazo mínimo para desenvolvimento?
+30. Há garantia nos desenvolvimentos?
+31. Como funciona o suporte pós-entrega?
+32. Quais tecnologias vocês utilizam?
+33. Qual o valor mínimo para um projeto?
+
+## Perguntas sobre Tecnologias
+
+34. Quais linguagens de programação vocês usam?
+35. Vocês trabalham com cloud?
+36. Quais bancos de dados vocês utilizam?
+37. Vocês usam Docker?
+
+## Perguntas sobre Histórico
+
+38. Quando a empresa foi fundada?
+39. Quantos clientes já foram atendidos?
+40. Em que ano a empresa se expandiu para 3 estados?
+41. Quando foi aberta a filial em São Paulo?
+
+## Perguntas Complexas (Teste de RAG)
+
+42. Me explique todo o processo desde a abertura de um chamado até sua resolução
+43. Quais são todas as certificações da empresa?
+44. Me conte a história completa da TechCorp
+45. Como funciona o atendimento ao cliente da empresa?
+46. Quais são todos os benefícios oferecidos aos clientes?
+
+## Perguntas que DEVEM retornar "não sei"
+
+47. Qual o preço do iPhone 15?
+48. Como fazer um bolo de chocolate?
+49. Qual a capital da França?
+50. Como funciona o sistema de uma empresa concorrente?
+
+Estas perguntas servem para testar se o RAG está funcionando corretamente.

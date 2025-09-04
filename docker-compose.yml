@@ -18,3 +18,16 @@ services:
     volumes:
       - .:/app
       - ./chroma_data:/app/chroma_data
+    environment:
+      - GROQ_API_KEY=${GROQ_API_KEY}
+      - OPENAI_API_KEY=${OPENAI_API_KEY}
+      - GROQ_MODEL=${GROQ_MODEL}
+      - RAG_SEARCH_K=${RAG_SEARCH_K}
+      - RAG_CHUNK_SIZE=${RAG_CHUNK_SIZE}
+      - RAG_CHUNK_OVERLAP=${RAG_CHUNK_OVERLAP}
+      - RAG_DATA_DIR=${RAG_DATA_DIR}
+      - CHROMA_PERSIST_DIR=${CHROMA_PERSIST_DIR}
+      - WAHA_API_URL=${WAHA_API_URL}
+      - WAHA_SESSION=${WAHA_SESSION}
+      - HISTORY_LIMIT=${HISTORY_LIMIT}
+      - FLASK_DEBUG=${FLASK_DEBUG}

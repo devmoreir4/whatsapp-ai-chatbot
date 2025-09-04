@@ -1,0 +1,138 @@
+# Manual da Empresa TechCorp
+
+## Informações da Empresa
+
+**Nome:** TechCorp Soluções em Tecnologia
+**CNPJ:** 12.345.678/0001-90
+**Endereço:** Rua das Tecnologias, 123, Centro, São Paulo - SP
+**Telefone:** (11) 99999-9999
+**Email:** contato@techcorp.com.br
+**Site:** www.techcorp.com.br
+
+## Horários de Funcionamento
+
+- **Segunda a Sexta:** 8h às 18h
+- **Sábado:** 8h às 12h
+- **Domingo:** Fechado
+- **Feriados:** Fechado
+
+## Serviços Oferecidos
+
+### 1. Desenvolvimento de Software
+- Aplicações web personalizadas
+- Sistemas de gestão empresarial
+- Aplicativos móveis (iOS e Android)
+- Integração de sistemas legados
+
+### 2. Consultoria em TI
+- Análise de processos empresariais
+- Implementação de soluções tecnológicas
+- Treinamento de equipes
+- Auditoria de sistemas
+
+### 3. Suporte Técnico
+- Suporte 24/7 para sistemas críticos
+- Manutenção preventiva
+- Resolução de problemas
+- Monitoramento de infraestrutura
+
+## Políticas da Empresa
+
+### Política de Atendimento
+- Resposta a emails em até 2 horas úteis
+- Suporte telefônico prioritário para clientes premium
+- SLA de 99.9% de disponibilidade para sistemas críticos
+- Garantia de 1 ano em todos os desenvolvimentos
+
+### Política de Preços
+- Orçamentos gratuitos para projetos acima de R$ 10.000
+- Desconto de 10% para pagamento à vista
+- Parcelamento em até 12x sem juros
+- Preços especiais para ONGs e instituições de ensino
+
+### Política de Qualidade
+- Testes automatizados em todos os desenvolvimentos
+- Código revisado por pelo menos 2 desenvolvedores
+- Documentação completa de todos os projetos
+- Certificação ISO 9001:2015
+
+## Procedimentos Internos
+
+### Processo de Desenvolvimento
+1. **Análise de Requisitos** (1-3 dias)
+2. **Proposta Técnica** (2-5 dias)
+3. **Aprovação do Cliente** (1-2 dias)
+4. **Desenvolvimento** (conforme cronograma)
+5. **Testes** (20% do tempo de desenvolvimento)
+6. **Deploy e Treinamento** (1-2 dias)
+
+### Processo de Suporte
+1. **Abertura de Chamado** (via email ou telefone)
+2. **Classificação de Prioridade** (Crítica, Alta, Média, Baixa)
+3. **Atribuição de Técnico** (até 1 hora)
+4. **Resolução** (conforme SLA)
+5. **Fechamento e Avaliação** (satisfação do cliente)
+
+## Contatos por Departamento
+
+### Comercial
+- **Gerente:** Maria Silva
+- **Email:** comercial@techcorp.com.br
+- **Telefone:** (11) 99999-8888
+
+### Técnico
+- **Gerente:** João Santos
+- **Email:** tecnico@techcorp.com.br
+- **Telefone:** (11) 99999-7777
+
+### Financeiro
+- **Gerente:** Ana Costa
+- **Email:** financeiro@techcorp.com.br
+- **Telefone:** (11) 99999-6666
+
+## FAQ - Perguntas Frequentes
+
+**P: Qual o prazo mínimo para desenvolvimento de um sistema?**
+R: O prazo mínimo é de 30 dias úteis para sistemas simples. Sistemas complexos podem levar de 3 a 6 meses.
+
+**P: Vocês oferecem garantia nos desenvolvimentos?**
+R: Sim, oferecemos garantia de 1 ano em todos os desenvolvimentos, incluindo correções de bugs e suporte técnico.
+
+**P: Como funciona o suporte pós-entrega?**
+R: Oferecemos 3 meses de suporte gratuito incluído. Após esse período, o suporte é cobrado conforme plano contratado.
+
+**P: Vocês trabalham com tecnologias específicas?**
+R: Trabalhamos com as principais tecnologias: Python, JavaScript, Java, .NET, React, Angular, Vue.js, Node.js, entre outras.
+
+**P: Qual o valor mínimo para um projeto?**
+R: Não temos valor mínimo fixo. O orçamento é baseado na complexidade e escopo do projeto.
+
+## Informações Técnicas
+
+### Tecnologias Utilizadas
+- **Backend:** Python, Java, .NET, Node.js
+- **Frontend:** React, Angular, Vue.js, HTML5, CSS3
+- **Banco de Dados:** PostgreSQL, MySQL, MongoDB, SQL Server
+- **Cloud:** AWS, Azure, Google Cloud
+- **DevOps:** Docker, Kubernetes, Jenkins, GitLab CI
+
+### Certificações
+- Microsoft Partner
+- AWS Advanced Consulting Partner
+- Google Cloud Partner
+- ISO 9001:2015
+- LGPD Compliance
+
+## Histórico da Empresa
+
+Fundada em 2015, a TechCorp nasceu da visão de democratizar o acesso à tecnologia de qualidade para empresas de todos os portes. Com mais de 8 anos de experiência, já atendemos mais de 500 clientes em todo o Brasil.
+
+### Marcos Importantes
+- **2015:** Fundação da empresa
+- **2017:** Primeira certificação ISO
+- **2019:** Expansão para 3 estados
+- **2021:** Certificação AWS Advanced Partner
+- **2023:** Abertura de filial em São Paulo
+- **2024:** 500+ clientes atendidos
+
+Este manual contém todas as informações essenciais sobre a TechCorp e pode ser usado para responder perguntas sobre a empresa, serviços, políticas e procedimentos.

@@ -7,25 +7,32 @@ from langchain_chroma import Chroma
 from langchain_core.messages import HumanMessage, AIMessage
 from langchain_core.prompts import ChatPromptTemplate, MessagesPlaceholder
 from langchain_groq import ChatGroq
-from langchain_huggingface import HuggingFaceEmbeddings
+from langchain_openai import OpenAIEmbeddings
 
 os.environ['GROQ_API_KEY'] = config('GROQ_API_KEY')
 
 class AIBot:
     def __init__(self):
-        self.__chat = ChatGroq(model="llama-3.1-8b-instant") # llama-3.1-70b-versatile
+        self.__model = config('GROQ_MODEL', default='llama-3.1-8b-instant')
         self.__retriever = self.__build_retriever()
+        self.__chain = self.__build_chain()
 
     def __build_retriever(self):
-        persist_directory = '/app/chroma_data'
-        embedding = HuggingFaceEmbeddings()
+        persist_directory = config('CHROMA_PERSIST_DIR', default='/app/chroma_data')
+
+        embedding = OpenAIEmbeddings(
+            model="text-embedding-3-small",
+            openai_api_key=config('OPENAI_API_KEY')
+        )
 
         vector_store = Chroma(
             persist_directory=persist_directory,
             embedding_function=embedding,
         )
+
+        search_k = config('RAG_SEARCH_K', default=30, cast=int)
         return vector_store.as_retriever(
-            search_kwargs={'k': 30},
+            search_kwargs={'k': search_k},
         )
 
     def __build_messages(self, history_messages, question):
@@ -36,35 +43,48 @@ class AIBot:
         messages.append(HumanMessage(content=question))
         return messages
 
-    def invoke(self, history_messages, question):
-        SYSTEM_TEMPLATE = '''
-        Responda as perguntas dos usuários com base no contexto abaixo.
-        Você é um assistente especializado em fornecer alertas e informações sobre o município de Bom Jesus do Itabapoana.
-        Seu foco é o monitoramento do Rio Itabapoana e das condições climáticas locais.
-        Utilize os dados disponíveis sobre as medições do rio (como níveis e chuvas acumuladas) e as informações meteorológicas.
-        Forneça respostas claras, objetivas e precisas, sempre em português brasileiro.
-        Leve em consideração o histórico da conversa para manter a coerência.
+    def __build_chain(self):
+        system_template = """You are a helpful AI assistant that answers questions based on the provided context.
+        Always respond in Brazilian Portuguese.
 
-        <context>
-        {context}
-        </context>
-        '''
+        Use the following pieces of context to answer the user's question.
+        If you don't know the answer based on the context, say that you don't know.
 
-        docs = self.__retriever.invoke(question)
-        question_answering_prompt = ChatPromptTemplate.from_messages(
-            [
-                (
-                    'system',
-                    SYSTEM_TEMPLATE,
-                ),
-                MessagesPlaceholder(variable_name='messages'),
-            ]
+        Context: {context}
+
+        Question: {input}"""
+
+        prompt = ChatPromptTemplate.from_messages([
+            ("system", system_template),
+            MessagesPlaceholder(variable_name="chat_history"),
+            ("human", "{input}"),
+        ])
+
+        llm = ChatGroq(
+            model=self.__model,
+            temperature=0.7,
         )
-        document_chain = create_stuff_documents_chain(self.__chat, question_answering_prompt)
-        response = document_chain.invoke(
-            {
-                'context': docs,
-                'messages': self.__build_messages(history_messages, question),
-            }
-        )
+
+        document_chain = create_stuff_documents_chain(llm, prompt)
+        return document_chain
+
+    def get_response(self, question, chat_history=None):
+        if chat_history is None:
+            chat_history = []
+
+        formatted_history = []
+        for message in chat_history:
+            if message.get('role') == 'user':
+                formatted_history.append(HumanMessage(content=message.get('content', '')))
+            elif message.get('role') == 'assistant':
+                formatted_history.append(AIMessage(content=message.get('content', '')))
+
+        docs = self.__retriever.get_relevant_documents(question)
+
+        response = self.__chain.invoke({
+            "input": question,
+            "context": docs,
+            "chat_history": formatted_history
+        })
+
         return response
