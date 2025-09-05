@@ -1,6 +1,5 @@
 import os
 import glob
-from decouple import config
 
 from langchain.text_splitter import RecursiveCharacterTextSplitter
 from langchain_chroma import Chroma
@@ -13,15 +12,35 @@ from langchain_community.document_loaders import (
 )
 from langchain_openai import OpenAIEmbeddings
 
+from core.exceptions import (
+    RAGException,
+    DocumentLoadException,
+    VectorStoreException,
+    EmbeddingException,
+    ConfigurationException
+)
+from core.config import Config
 
-os.environ['OPENAI_API_KEY'] = config('OPENAI_API_KEY')
+Config.setup_environment()
 
 
 def load_documents_from_directory(data_directory=None):
-    if data_directory is None:
-        data_directory = config('RAG_DATA_DIR', default='/app/rag/data')
-    all_documents = []
+    try:
+        if data_directory is None:
+            data_directory = Config.RAG_DATA_DIR
 
+        if not os.path.exists(data_directory):
+            raise ConfigurationException(f"Data directory does not exist: {data_directory}")
+
+        if not os.path.isdir(data_directory):
+            raise ConfigurationException(f"Path is not a directory: {data_directory}")
+
+    except Exception as e:
+        if isinstance(e, ConfigurationException):
+            raise
+        raise ConfigurationException(f"Error validating data directory: {str(e)}")
+
+    all_documents = []
     loaders = {
         '.pdf': PyPDFLoader,
         '.csv': CSVLoader,
@@ -32,68 +51,136 @@ def load_documents_from_directory(data_directory=None):
     }
 
     for extension, loader_class in loaders.items():
-        pattern = os.path.join(data_directory, f'**/*{extension}')
-        files = glob.glob(pattern, recursive=True)
+        try:
+            pattern = os.path.join(data_directory, f'**/*{extension}')
+            files = glob.glob(pattern, recursive=True)
 
-        for file_path in files:
-            try:
-                print(f"Loading file: {file_path}")
-                loader = loader_class(file_path)
-                docs = loader.load()
-                all_documents.extend(docs)
-                print(f"SUCCESS: {file_path} loaded successfully ({len(docs)} documents)")
-            except Exception as e:
-                print(f"ERROR: Failed to load {file_path}: {e}")
+            for file_path in files:
+                try:
+                    print(f"Loading file: {file_path}")
+                    loader = loader_class(file_path)
+                    docs = loader.load()
+                    all_documents.extend(docs)
+                    print(f"SUCCESS: {file_path} loaded successfully ({len(docs)} documents)")
+                except Exception as e:
+                    error_msg = f"Failed to load {file_path}: {str(e)}"
+                    print(f"ERROR: {error_msg}")
+                    raise DocumentLoadException(error_msg) from e
+
+        except DocumentLoadException:
+            # Re-raise DocumentLoadException
+            raise
+        except Exception as e:
+            error_msg = f"Error processing {extension} files: {str(e)}"
+            print(f"ERROR: {error_msg}")
+            raise DocumentLoadException(error_msg) from e
 
     return all_documents
 
 
 def create_vector_store(documents, persist_directory=None):
-    if persist_directory is None:
-        persist_directory = config('CHROMA_PERSIST_DIR', default='/app/chroma_data')
+    try:
+        if persist_directory is None:
+            persist_directory = Config.CHROMA_PERSIST_DIR
 
-    print(f"Processing {len(documents)} documents...")
+        if not documents:
+            raise VectorStoreException("No documents provided for vector store creation")
 
-    chunk_size = config('RAG_CHUNK_SIZE', default=1000, cast=int)
-    chunk_overlap = config('RAG_CHUNK_OVERLAP', default=200, cast=int)
+    except Exception as e:
+        if isinstance(e, (ConfigurationException, VectorStoreException)):
+            raise
+        raise ConfigurationException(f"Error validating parameters: {str(e)}")
 
-    text_splitter = RecursiveCharacterTextSplitter(
-        chunk_size=chunk_size,
-        chunk_overlap=chunk_overlap,
-    )
+    try:
+        print(f"Processing {len(documents)} documents...")
 
-    chunks = text_splitter.split_documents(documents)
-    print(f"Created {len(chunks)} text chunks")
+        chunk_size = Config.RAG_CHUNK_SIZE
+        chunk_overlap = Config.RAG_CHUNK_OVERLAP
 
-    embedding_model = config('OPENAI_EMBEDDING_MODEL', default='text-embedding-3-small')
-    embedding = OpenAIEmbeddings(
-        model=embedding_model,
-        openai_api_key=config('OPENAI_API_KEY')
-    )
+        if chunk_size <= 0:
+            raise ConfigurationException(f"Invalid chunk_size: {chunk_size}. Must be positive.")
+        if chunk_overlap < 0:
+            raise ConfigurationException(f"Invalid chunk_overlap: {chunk_overlap}. Must be non-negative.")
 
-    vector_store = Chroma(
-        embedding_function=embedding,
-        persist_directory=persist_directory,
-    )
+        text_splitter = RecursiveCharacterTextSplitter(
+            chunk_size=chunk_size,
+            chunk_overlap=chunk_overlap,
+        )
 
-    vector_store.add_documents(documents=chunks)
-    print(f"SUCCESS: Vector store created successfully at {persist_directory}")
+        chunks = text_splitter.split_documents(documents)
+        print(f"Created {len(chunks)} text chunks")
 
-    return vector_store
+        if not chunks:
+            raise VectorStoreException("No text chunks created from documents")
+
+    except Exception as e:
+        if isinstance(e, (ConfigurationException, VectorStoreException)):
+            raise
+        raise VectorStoreException(f"Error processing documents: {str(e)}") from e
+
+    try:
+        embedding_model = Config.OPENAI_EMBEDDING_MODEL
+        openai_api_key = Config.OPENAI_API_KEY
+
+        if not openai_api_key:
+            raise ConfigurationException("OPENAI_API_KEY is not configured")
+
+        embedding = OpenAIEmbeddings(
+            model=embedding_model,
+            openai_api_key=openai_api_key
+        )
+
+    except Exception as e:
+        if isinstance(e, ConfigurationException):
+            raise
+        raise EmbeddingException(f"Error creating embedding model: {str(e)}") from e
+
+    try:
+        vector_store = Chroma(
+            embedding_function=embedding,
+            persist_directory=persist_directory,
+        )
+
+        vector_store.add_documents(documents=chunks)
+        print(f"SUCCESS: Vector store created successfully at {persist_directory}")
+
+        return vector_store
+
+    except Exception as e:
+        raise VectorStoreException(f"Error creating vector store: {str(e)}") from e
 
 
 if __name__ == '__main__':
-    print("Starting RAG indexing process...")
+    try:
+        print("Starting RAG indexing process...")
 
-    documents = load_documents_from_directory()
+        documents = load_documents_from_directory()
 
-    if not documents:
-        print("ERROR: No documents found in /app/rag/data folder")
-        print("Supported formats: PDF, CSV, TXT, MD, DOC, DOCX")
+        if not documents:
+            print("ERROR: No documents found in /app/rag/data folder")
+            exit(1)
+
+        vector_store = create_vector_store(documents)
+
+        print("SUCCESS: RAG indexing process completed successfully!")
+        print(f"Total documents processed: {len(documents)}")
+        print("Bot is ready to answer questions based on loaded documents!")
+
+    except ConfigurationException as e:
+        print(f"CONFIGURATION ERROR: {e}")
         exit(1)
-
-    vector_store = create_vector_store(documents)
-
-    print("SUCCESS: RAG indexing process completed successfully!")
-    print(f"Total documents processed: {len(documents)}")
-    print("Bot is ready to answer questions based on loaded documents!")
+    except DocumentLoadException as e:
+        print(f"DOCUMENT LOAD ERROR: {e}")
+        exit(1)
+    except VectorStoreException as e:
+        print(f"VECTOR STORE ERROR: {e}")
+        exit(1)
+    except EmbeddingException as e:
+        print(f"EMBEDDING ERROR: {e}")
+        exit(1)
+    except RAGException as e:
+        print(f"RAG ERROR: {e}")
+        exit(1)
+    except Exception as e:
+        print(f"UNEXPECTED ERROR: {e}")
+        exit(1)
