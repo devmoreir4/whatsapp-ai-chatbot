@@ -1,33 +1,35 @@
-# RAG do bot
+# Sistema RAG (Retrieval-Augmented Generation)
 
-A pasta `data` contém os documentos que serão indexados pelo sistema RAG do bot.
+O sistema RAG permite que o bot responda perguntas baseadas em documentos específicos da sua empresa, combinando busca inteligente com geração de texto da IA.
+
+## Estrutura de Arquivos
+
+```
+rag/
+├── data/
+│   ├── manual_empresa.txt
+│   └── perguntas_teste.txt
+├── rag.py
+└── README.md
+```
 
 ## Arquivos de Exemplo Incluídos
 
 - **`manual_empresa.txt`** - Manual de exemplo da empresa TechCorp com informações detalhadas
 - **`perguntas_teste.txt`** - Lista de 50 perguntas para testar o funcionamento do RAG
 
-## Como Testar o RAG
+## Como Utilizar
 
-### 1. Reindexe os documentos:
+### 1. Adicionar Documentos
+Coloque seus documentos na pasta `data/` nos formatos suportados.
+
+### 2. Indexar Documentos
 ```bash
 docker exec -it wpp_bot_api python /app/rag/rag.py
 ```
 
-### 2. Teste com perguntas simples:
-- "Qual é o nome da empresa?"
-- "Qual o telefone da TechCorp?"
-- "Quais são os horários de funcionamento?"
-
-### 3. Teste com perguntas complexas:
-- "Me explique todo o processo de desenvolvimento"
-- "Quais são todas as certificações da empresa?"
-- "Como funciona o atendimento ao cliente?"
-
-### 4. Teste perguntas que devem falhar:
-- "Qual o preço do iPhone?"
-- "Como fazer um bolo?"
-- "Qual a capital da França?"
+### 3. Testar o Sistema
+O bot automaticamente usará o RAG para responder perguntas baseadas nos documentos indexados.
 
 ## Formatos Suportados
 
@@ -37,7 +39,7 @@ docker exec -it wpp_bot_api python /app/rag/rag.py
 - **Markdown** (.md) - Documentação em Markdown
 - **Word** (.doc, .docx) - Documentos do Microsoft Word
 
-## Dicas para Melhor Performance do RAG
+## Dicas para Melhor Performance
 
 ### Estrutura de Documentos:
 - **Use títulos claros** (# Título, ## Subtítulo)
@@ -53,7 +55,7 @@ docker exec -it wpp_bot_api python /app/rag/rag.py
 - **Políticas e regras**
 
 ### Exemplo de Estrutura:
-```
+```markdown
 # Manual da Empresa
 
 ## Informações Básicas
@@ -73,12 +75,8 @@ R: O prazo mínimo é de 30 dias úteis.
 
 ## Reindexação
 
-Sempre reindexe após adicionar/remover arquivos. Para atualizar a base de conhecimento:
+**Sempre reindexe após adicionar/remover arquivos:**
 
 ```bash
-# Do host
 docker exec -it wpp_bot_api python /app/rag/rag.py
-
-# Dentro do container
-python /app/rag/rag.py
 ```
