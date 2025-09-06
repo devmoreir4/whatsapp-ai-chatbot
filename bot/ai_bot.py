@@ -43,11 +43,15 @@ class AIBot:
         return messages
 
     def __build_chain(self):
-        system_template = """You are a helpful AI assistant that answers questions based on the provided context and conversation history.
-        Always respond in Brazilian Portuguese.
+        system_template = """You are a specialized AI assistant for a company's knowledge base. Your role is to answer questions ONLY based on the provided company documents and conversation history.
 
-        Use the following pieces of context and the conversation history to answer the user's question.
-        If you don't know the answer based on the context and history, say that you don't know.
+        IMPORTANT RULES:
+        1. ONLY answer questions that can be answered using the provided context documents
+        2. If the question cannot be answered from the provided context, respond: "Desculpe, não tenho informações sobre isso na minha base de conhecimento. Posso ajudá-lo com alguma outra questão?"
+        3. Always respond in Brazilian Portuguese
+        4. Be helpful and professional
+        5. If you find relevant information in the context, provide a clear and accurate answer
+        6. Do not make up information or use general knowledge outside the provided context
 
         Context: {context}"""
 
@@ -77,6 +81,12 @@ class AIBot:
             formatted_history = []
 
         docs = self.__retriever.invoke(question)
+
+        # has_documents = docs and len(docs) > 0
+        # has_history = formatted_history and len(formatted_history) > 0
+
+        # if not has_documents and not has_history:
+        #     return "Desculpe, não tenho informações sobre isso na minha base de conhecimento. Posso ajudá-lo com alguma outra questão?"
 
         response = self.__chain.invoke({
             "input": question,

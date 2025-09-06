@@ -1,5 +1,5 @@
 from decouple import config
-from exceptions import ConfigurationException
+from .exceptions import ConfigurationException
 
 
 class Config:
