@@ -1,10 +1,10 @@
 from langchain_community.chat_message_histories import RedisChatMessageHistory
 
-from core.exceptions import (
+from exceptions.exceptions import (
     MemoryException,
     ConfigurationException
 )
-from core.config import Config
+from config.config import Config
 
 
 def get_session_history(session_id):
@@ -33,7 +33,7 @@ def get_session_history(session_id):
         return RedisChatMessageHistory(
             session_id=session_id,
             url=Config.REDIS_URL,
-            ttl=Config.HISTORY_TTL_HOURS * 3600, # hours to seconds
+            ttl=Config.HISTORY_TTL_HOURS * 3600,  # hours to seconds
         )
     except Exception as e:
         raise MemoryException(f"Failed to create Redis chat history for session {session_id}: {str(e)}") from e

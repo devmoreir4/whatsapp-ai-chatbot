@@ -2,17 +2,6 @@
 
 O sistema RAG permite que o bot responda perguntas baseadas em documentos específicos da sua empresa, combinando busca inteligente com geração de texto da IA.
 
-## Estrutura de Arquivos
-
-```
-rag/
-├── data/
-│   ├── manual_empresa.txt
-│   └── perguntas_teste.txt
-├── rag.py
-└── README.md
-```
-
 ## Arquivos de Exemplo Incluídos
 
 - **`manual_empresa.txt`** - Manual de exemplo da empresa TechCorp com informações detalhadas
@@ -21,11 +10,11 @@ rag/
 ## Como Utilizar
 
 ### 1. Adicionar Documentos
-Coloque seus documentos na pasta `data/` nos formatos suportados.
+Coloque seus documentos na pasta `data/documents/` nos formatos suportados.
 
 ### 2. Indexar Documentos
 ```bash
-docker exec -it wpp_bot_api python /app/rag/rag.py
+docker exec -it wpp_bot_api python /app/bot/rag.py
 ```
 
 ### 3. Testar o Sistema
@@ -78,5 +67,5 @@ R: O prazo mínimo é de 30 dias úteis.
 **Sempre reindexe após adicionar/remover arquivos:**
 
 ```bash
-docker exec -it wpp_bot_api python /app/rag/rag.py
+docker exec -it wpp_bot_api python /app/bot/rag.py
 ```

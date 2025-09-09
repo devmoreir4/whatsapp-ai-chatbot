@@ -5,12 +5,12 @@ from collections import defaultdict
 from bot.ai_bot import AIBot
 from services.waha import Waha
 from services.memory import clear_session_history, get_session_messages
-from core.exceptions import (
+from exceptions.exceptions import (
     BufferException,
     MemoryException,
     ConfigurationException
 )
-from core.config import Config
+from config.config import Config
 
 if not Config.REDIS_URL:
     raise ConfigurationException("REDIS_URL is not configured")

@@ -6,9 +6,10 @@ from langchain_openai import ChatOpenAI
 from langchain_openai import OpenAIEmbeddings
 from services.memory import get_session_history, trim_history_if_needed
 
-from core.config import Config
+from config.config import Config
 
 Config.setup_environment()
+
 
 class AIBot:
     def __init__(self):
@@ -81,12 +82,6 @@ class AIBot:
             formatted_history = []
 
         docs = self.__retriever.invoke(question)
-
-        # has_documents = docs and len(docs) > 0
-        # has_history = formatted_history and len(formatted_history) > 0
-
-        # if not has_documents and not has_history:
-        #     return "Desculpe, não tenho informações sobre isso na minha base de conhecimento. Posso ajudá-lo com alguma outra questão?"
 
         response = self.__chain.invoke({
             "input": question,

@@ -12,14 +12,14 @@ from langchain_community.document_loaders import (
 )
 from langchain_openai import OpenAIEmbeddings
 
-from core.exceptions import (
+from exceptions.exceptions import (
     RAGException,
     DocumentLoadException,
     VectorStoreException,
     EmbeddingException,
     ConfigurationException
 )
-from core.config import Config
+from config.config import Config
 
 Config.setup_environment()
 
@@ -157,7 +157,7 @@ if __name__ == '__main__':
         documents = load_documents_from_directory()
 
         if not documents:
-            print("ERROR: No documents found in /app/rag/data folder")
+            print("ERROR: No documents found in /app/data/documents folder")
             exit(1)
 
         vector_store = create_vector_store(documents)

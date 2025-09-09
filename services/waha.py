@@ -1,10 +1,10 @@
 import requests
 
-from core.exceptions import (
+from exceptions.exceptions import (
     ConfigurationException,
     WahaException
 )
-from core.config import Config
+from config.config import Config
 
 
 class Waha:

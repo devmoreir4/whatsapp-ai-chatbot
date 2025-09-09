@@ -58,7 +58,7 @@ O projeto **WhatsApp AI Chatbot** integra:
 
 ## Tecnologias Utilizadas
 
-- **Python 3.11**
+- **Python 3.11:** Linguagem de programação para desenvolvimento do backend
 - **FastAPI:** Framework moderno e de alta performance para desenvolvimento da API web
 - **Docker & Docker Compose:** Para containerização e orquestração dos serviços
 - **Waha API:** Serviço utilizado para a comunicação e integração com o WhatsApp
@@ -82,7 +82,7 @@ O projeto **WhatsApp AI Chatbot** integra:
     Crie um arquivo .env na raiz do projeto conforme o arquivo `.env.example` e defina as suas variáveis.
 
 3. **Configure a Base de Conhecimento:**
-    - Adicione seus documentos na pasta `rag/data/`
+    - Adicione seus documentos na pasta `data/documents/`
     - Formatos suportados: PDF, CSV, TXT, MD, DOC, DOCX
 
 4. **Construa e inicie os containers:**
@@ -93,7 +93,7 @@ O projeto **WhatsApp AI Chatbot** integra:
 5. **Indexe os documentos:**
     - Execute o script de indexação após o build:
     ```bash
-    docker exec -it wpp_bot_api python /app/rag/rag.py
+    docker exec -it wpp_bot_api python /app/bot/rag.py
     ```
 
 6. **Acesso aos Serviços:**

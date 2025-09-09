@@ -1,5 +1,5 @@
 from decouple import config
-from .exceptions import ConfigurationException
+from exceptions.exceptions import ConfigurationException
 
 
 class Config:
@@ -14,8 +14,8 @@ class Config:
     RAG_SEARCH_K = config('RAG_SEARCH_K', default=30, cast=int)
     RAG_CHUNK_SIZE = config('RAG_CHUNK_SIZE', default=1000, cast=int)
     RAG_CHUNK_OVERLAP = config('RAG_CHUNK_OVERLAP', default=200, cast=int)
-    RAG_DATA_DIR = config('RAG_DATA_DIR', default='/app/rag/data')
-    CHROMA_PERSIST_DIR = config('CHROMA_PERSIST_DIR', default='/app/chroma_data')
+    RAG_DATA_DIR = config('RAG_DATA_DIR', default='/app/data/documents')
+    CHROMA_PERSIST_DIR = config('CHROMA_PERSIST_DIR', default='/app/data/chroma_data')
 
     # Waha
     WAHA_API_URL = config('WAHA_API_URL', default='http://waha:3000')
