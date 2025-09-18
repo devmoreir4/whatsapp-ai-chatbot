@@ -17,7 +17,6 @@
   <img src="https://img.shields.io/badge/Redis-6.4.0-red?style=flat-square&logo=redis" alt="Redis">
   <img src="https://img.shields.io/badge/LangChain-0.3.27+-orange?style=flat-square&logo=langchain" alt="LangChain">
   <img src="https://img.shields.io/badge/WhatsApp-Waha API-green?style=flat-square&logo=whatsapp" alt="WAHA">
-  <img src="https://img.shields.io/badge/OpenAI-1.106.1-orange?style=flat-square&logo=openai" alt="OpenAI">
 </p>
 
 Um bot de inteligência artificial integrado ao WhatsApp que utiliza técnicas de RAG (Retrieval-Augmented Generation) para responder perguntas baseadas em documentos carregados em sua memória. O sistema combina busca semântica com geração de respostas contextuais e mantém histórico persistente de conversas para fornecer informações precisas e relevantes com memória de contexto.
@@ -91,7 +90,8 @@ O projeto **WhatsApp AI Chatbot** integra:
    ```
 
 5. **Indexe os documentos:**
-    - Execute o script de indexação após o build:
+    - O sistema gera a indexação automaticamente ao subir o container.
+    - Para indexar manualmente execute o script após o build:
     ```bash
     docker exec -it wpp_bot_api python /app/bot/rag.py
     ```
