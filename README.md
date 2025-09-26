@@ -10,19 +10,9 @@
   <a href="#licença">Licença</a>
 </p>
 
-<p align="center">
-  <img src="https://img.shields.io/badge/Python-3.11+-blue?style=flat-square&logo=python" alt="Python">
-  <img src="https://img.shields.io/badge/FastAPI-0.116.1+-green?style=flat-square&logo=fastapi" alt="FastAPI">
-  <img src="https://img.shields.io/badge/Docker%20Compose-2.38+-blue?style=flat-square&logo=docker" alt="Docker Compose">
-  <img src="https://img.shields.io/badge/Redis-6.4.0-red?style=flat-square&logo=redis" alt="Redis">
-  <img src="https://img.shields.io/badge/LangChain-0.3.27+-orange?style=flat-square&logo=langchain" alt="LangChain">
-  <img src="https://img.shields.io/badge/WhatsApp-Waha API-green?style=flat-square&logo=whatsapp" alt="WAHA">
-</p>
+## Descrição
 
 Um bot de inteligência artificial integrado ao WhatsApp que utiliza técnicas de RAG (Retrieval-Augmented Generation) para responder perguntas baseadas em documentos carregados em sua memória. O sistema combina busca semântica com geração de respostas contextuais e mantém histórico persistente de conversas para fornecer informações precisas e relevantes com memória de contexto.
-
-
-## Descrição
 
 O projeto **WhatsApp AI Chatbot** integra:
 - Uma API desenvolvida em FastAPI para processar mensagens e comandos do WhatsApp;

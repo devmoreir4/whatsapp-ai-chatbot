@@ -21,8 +21,6 @@ from exceptions.exceptions import (
 )
 from config.config import Config
 
-Config.setup_environment()
-
 
 def load_documents_from_directory(data_directory=None):
     try:

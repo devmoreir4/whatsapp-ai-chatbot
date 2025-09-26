@@ -5,8 +5,8 @@ from exceptions.exceptions import ConfigurationException
 class Config:
 
     # OpenAI
-    OPENAI_API_KEY = config('OPENAI_API_KEY')
-    OPENAI_MODEL = config('OPENAI_MODEL', default='gpt-3.5-turbo')
+    OPENAI_API_KEY = config('OPENAI_API_KEY', default='')
+    OPENAI_MODEL = config('OPENAI_MODEL', default='gpt-4o-mini')
     OPENAI_TEMPERATURE = config('OPENAI_TEMPERATURE', default=0.7, cast=float)
     OPENAI_EMBEDDING_MODEL = config('OPENAI_EMBEDDING_MODEL', default='text-embedding-3-small')
 

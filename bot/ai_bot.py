@@ -8,8 +8,6 @@ from services.memory import get_session_history, trim_history_if_needed
 
 from config.config import Config
 
-Config.setup_environment()
-
 
 class AIBot:
     def __init__(self):

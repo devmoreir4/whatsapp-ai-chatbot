@@ -4,6 +4,8 @@ import uvicorn
 from routes import router
 from config.config import Config
 
+
+Config.setup_environment()
 Config.validate()
 
 app = FastAPI(title="WhatsApp AI Chatbot", version="1.0.0")

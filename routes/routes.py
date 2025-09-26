@@ -22,8 +22,16 @@ router = APIRouter()
 async def webhook(request: Request):
     try:
         data = await request.json()
-        chat_id = data['payload']['from']
-        received_message = data['payload']['body']
+
+        if 'payload' not in data:
+            raise HTTPException(status_code=400, detail="Missing payload in request")
+
+        payload = data['payload']
+        if 'from' not in payload or 'body' not in payload:
+            raise HTTPException(status_code=400, detail="Missing required fields in payload")
+
+        chat_id = payload['from']
+        received_message = payload['body']
         is_group = '@g.us' in chat_id
 
         if is_group:
