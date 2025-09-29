@@ -2,17 +2,9 @@
     WhatsApp AI Chatbot
 </h1>
 
-<p align="center">
-  <a href="#descrição">Descrição</a> •
-  <a href="#funcionalidades">Funcionalidades</a> •
-  <a href="#tecnologias-utilizadas">Tecnologias</a> •
-  <a href="#instalação-e-execução">Instalação</a> •
-  <a href="#licença">Licença</a>
+<p align="justify">
+  Um bot de inteligência artificial integrado ao WhatsApp que utiliza técnicas de RAG (Retrieval-Augmented Generation) para responder perguntas baseadas em documentos carregados em sua memória. O sistema combina busca semântica com geração de respostas contextuais e mantém histórico persistente de conversas para fornecer informações precisas e relevantes com memória de contexto.
 </p>
-
-## Descrição
-
-Um bot de inteligência artificial integrado ao WhatsApp que utiliza técnicas de RAG (Retrieval-Augmented Generation) para responder perguntas baseadas em documentos carregados em sua memória. O sistema combina busca semântica com geração de respostas contextuais e mantém histórico persistente de conversas para fornecer informações precisas e relevantes com memória de contexto.
 
 O projeto **WhatsApp AI Chatbot** integra:
 - Uma API desenvolvida em FastAPI para processar mensagens e comandos do WhatsApp;
