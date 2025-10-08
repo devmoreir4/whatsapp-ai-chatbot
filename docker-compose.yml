@@ -17,7 +17,7 @@ services:
     depends_on:
       - redis
     environment:
-      - WAHA_PRINT_QR=false
+      - WAHA_PRINT_QR=true
     ports:
       - '3000:3000'
 
@@ -36,22 +36,8 @@ services:
       - waha
     environment:
       - OPENAI_API_KEY=${OPENAI_API_KEY}
-      - OPENAI_MODEL=gpt-4o-mini
-      - OPENAI_TEMPERATURE=0.7
-      - OPENAI_EMBEDDING_MODEL=text-embedding-3-small
-      - RAG_SEARCH_K=30
-      - RAG_CHUNK_SIZE=1000
-      - RAG_CHUNK_OVERLAP=200
-      - RAG_DATA_DIR=/app/data/documents
-      - CHROMA_PERSIST_DIR=/app/data/chroma_data
-      - WAHA_API_URL=http://waha:3000
-      - WAHA_SESSION=default
-      - REDIS_URL=redis://redis:6379
-      - BUFFER_KEY_SUFIX=:buffer
-      - DEBOUNCE_SECONDS=10
-      - BUFFER_TTL=300
-      - MAX_HISTORY_MESSAGES=100
-      - HISTORY_TTL_HOURS=168
+      - OPENAI_MODEL=${OPENAI_MODEL:-gpt-4o-mini}
+      - OPENAI_TEMPERATURE=${OPENAI_TEMPERATURE:-0.7}
 
 volumes:
   redis_data:

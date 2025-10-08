@@ -12,14 +12,6 @@ from exceptions.exceptions import (
 )
 from config.config import Config
 
-if not Config.REDIS_URL:
-    raise ConfigurationException("REDIS_URL is not configured")
-
-if Config.DEBOUNCE_SECONDS <= 0:
-    raise ConfigurationException(f"DEBOUNCE_SECONDS must be positive, got {Config.DEBOUNCE_SECONDS}")
-
-if Config.BUFFER_TTL <= 0:
-    raise ConfigurationException(f"BUFFER_TTL must be positive, got {Config.BUFFER_TTL}")
 
 try:
     redis_client = redis.Redis.from_url(Config.REDIS_URL, decode_responses=True)

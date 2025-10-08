@@ -18,7 +18,7 @@ from exceptions.exceptions import (
 router = APIRouter()
 
 
-@router.post('/chatbot/webhook/')
+@router.post('/chatbot/webhook/', tags=["Webhook"])
 async def webhook(request: Request):
     try:
         data = await request.json()
@@ -47,12 +47,12 @@ async def webhook(request: Request):
         raise HTTPException(status_code=500, detail=f"Internal server error: {str(e)}")
 
 
-@router.get('/health')
+@router.get('/health', tags=["Health"])
 async def health_check():
     return {'status': 'healthy', 'service': 'whatsapp-ai-chatbot'}
 
 
-@router.get('/buffer/status/{chat_id}')
+@router.get('/buffer/status/{chat_id}', tags=["Buffer"])
 async def get_buffer_status_endpoint(chat_id: str):
     try:
         status = await get_buffer_status(chat_id)
@@ -63,7 +63,7 @@ async def get_buffer_status_endpoint(chat_id: str):
         raise HTTPException(status_code=500, detail=f"Error getting buffer status: {str(e)}")
 
 
-@router.post('/buffer/cleanup')
+@router.post('/buffer/cleanup', tags=["Buffer"])
 async def cleanup_buffer():
     try:
         await cleanup_expired_tasks()
@@ -74,7 +74,7 @@ async def cleanup_buffer():
         raise HTTPException(status_code=500, detail=f"Error cleaning up tasks: {str(e)}")
 
 
-@router.delete('/chat/history/{chat_id}')
+@router.delete('/chat/history/{chat_id}', tags=["Chat History"])
 async def clear_history(chat_id: str):
     try:
         result = await clear_chat_history(chat_id)
@@ -88,7 +88,7 @@ async def clear_history(chat_id: str):
         raise HTTPException(status_code=500, detail=f"Error clearing chat history: {str(e)}")
 
 
-@router.get('/chat/history/{chat_id}')
+@router.get('/chat/history/{chat_id}', tags=["Chat History"])
 async def get_history(chat_id: str, limit: int = 10):
     try:
         result = await get_chat_history(chat_id, limit)
@@ -102,7 +102,7 @@ async def get_history(chat_id: str, limit: int = 10):
         raise HTTPException(status_code=500, detail=f"Error getting chat history: {str(e)}")
 
 
-@router.get('/chat/history/{chat_id}/stats')
+@router.get('/chat/history/{chat_id}/stats', tags=["Chat History"])
 async def get_history_stats_endpoint(chat_id: str):
     try:
         stats = get_history_stats(chat_id)

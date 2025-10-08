@@ -69,16 +69,21 @@ class AIBot:
         return document_chain
 
     def get_response(self, question, session_id=None):
+        print(f'Getting response for question: {question}, session_id: {session_id}')
+
         if session_id:
             try:
+                print(f'Loading history from Redis for session: {session_id}')
                 redis_history = get_session_history(session_id)
                 formatted_history = redis_history.messages
+                print(f'Loaded {len(formatted_history)} history messages')
             except Exception as e:
                 print(f"Error loading history from Redis: {e}")
                 formatted_history = []
         else:
             formatted_history = []
 
+        print('Retrieving documents for question')
         docs = self.__retriever.invoke(question)
 
         response = self.__chain.invoke({
@@ -89,6 +94,7 @@ class AIBot:
 
         if session_id:
             try:
+                print(f'Saving conversation to Redis for session: {session_id}')
                 redis_history = get_session_history(session_id)
                 redis_history.add_user_message(question)
                 redis_history.add_ai_message(response)

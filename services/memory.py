@@ -15,15 +15,6 @@ def get_session_history(session_id):
         if not isinstance(session_id, str):
             raise ConfigurationException(f"Session ID must be a string, got {type(session_id)}")
 
-        if Config.MAX_HISTORY_MESSAGES <= 0:
-            raise ConfigurationException(f"MAX_HISTORY_MESSAGES must be positive, got {Config.MAX_HISTORY_MESSAGES}")
-
-        if Config.HISTORY_TTL_HOURS <= 0:
-            raise ConfigurationException(f"HISTORY_TTL_HOURS must be positive, got {Config.HISTORY_TTL_HOURS}")
-
-        if not Config.REDIS_URL:
-            raise ConfigurationException("REDIS_URL is not configured")
-
     except ConfigurationException:
         raise
     except Exception as e:
