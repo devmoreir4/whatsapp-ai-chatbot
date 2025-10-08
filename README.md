@@ -1,20 +1,8 @@
-<h1 align="center">
-    WhatsApp AI Chatbot
-</h1>
+# WhatsApp AI Chatbot
 
 <p align="justify">
   Um bot de inteligência artificial integrado ao WhatsApp que utiliza técnicas de RAG (Retrieval-Augmented Generation) para responder perguntas baseadas em documentos carregados em sua memória. O sistema combina busca semântica com geração de respostas contextuais e mantém histórico persistente de conversas para fornecer informações precisas e relevantes com memória de contexto.
 </p>
-
-O projeto **WhatsApp AI Chatbot** integra:
-- Uma API desenvolvida em FastAPI para processar mensagens e comandos do WhatsApp;
-- Um módulo de IA que utiliza LangChain e modelos OpenAI para fornecer respostas contextuais;
-- Sistema RAG avançado para indexação e recuperação de informações a partir de múltiplos formatos de documento;
-- Sistema de histórico persistente com Redis para manter memória de conversas entre sessões;
-- Sistema de debounce inteligente para agrupar mensagens rápidas;
-- Suporte a diversos tipos de arquivo (PDF, CSV, TXT, MD, DOC, DOCX);
-- Orquestração via Docker e Docker Compose para facilitar a implantação e escalabilidade do sistema.
-
 
 ## Funcionalidades
 
@@ -29,8 +17,8 @@ O projeto **WhatsApp AI Chatbot** integra:
   - Sistema de Debounce Inteligente
 - **API Moderna e Performática:**
   - Processamento assíncrono com FastAPI
-  - Documentação automática em `/docs`
-  - Health check em `/health`
+  - Documentação Swagger em `/docs`
+  - Orquestração via Docker e Docker Compose
 - **Sistema de Histórico Persistente:**
   - Memória de contexto entre mensagens
   - TTL (Time To Live) para expiração automática
@@ -60,7 +48,7 @@ O projeto **WhatsApp AI Chatbot** integra:
    ```
 
 2. **Configure as variáveis de ambiente:**<br>
-    Crie um arquivo .env na raiz do projeto conforme o arquivo `.env.example` e defina as suas variáveis.
+    Crie um arquivo `.env` na raiz do projeto conforme o arquivo `.env.example` e defina as suas variáveis.
 
 3. **Configure a Base de Conhecimento:**
     - Adicione seus documentos na pasta `data/documents/`
@@ -80,8 +68,8 @@ O projeto **WhatsApp AI Chatbot** integra:
 
 6. **Acesso aos Serviços:**
     - **API FastAPI**: Disponível na porta 5000
-    - **Documentação automática**: [http://127.0.0.1:5000/docs](http://127.0.0.1:5000/docs)
-    - **Serviço Waha (WhatsApp)**: Disponível na porta [3000](http://127.0.0.1:3000)
+    - **Documentação Swagger**: [http://127.0.0.1:5000/docs](http://127.0.0.1:5000/docs)
+    - **Serviço Waha (WhatsApp)**: 3000
     - **Redis**: Disponível na porta 6379
 
     ### Endpoints da API
@@ -95,14 +83,22 @@ O projeto **WhatsApp AI Chatbot** integra:
     - **GET** `/chat/history/{chat_id}/stats` - Estatísticas do histórico
 
 7. **Configuração do WhatsApp:**
-    - Acesse o [Dashboard do WAHA](http://[::1]:3000/dashboard/).
-    - Inicie uma nova sessão com um dispositivo.
+    - Acesse o [Dashboard do WAHA](http://127.0.0.1:3000/dashboard/).
+    
+    **Configuração dos Workers:**
+    - Vá em **Workers** no dashboard
+    - Configure o **Nome** do worker (ex: "waha")
+    - Configure a **API URL** como: `http://127.0.0.1:3000`
+    - Salve a configuração
+    
+    **Configuração da Sessão:**
+    - Inicie uma nova sessão com um dispositivo
     - No painel de configurações, adicione um Webhook com a URL:
     ```bash
     http://api:5000/chatbot/webhook/
     ```
-    - Selecione somente o evento `message` para receber notificações de novas mensagens.
-    - Após a sincronização do serviço, o bot estará ativo e pronto para operar.
+    - Selecione somente o evento `message` para receber notificações de novas mensagens
+    - Após a sincronização do serviço, o bot estará ativo e pronto para operar
 
 
 ## Licença
